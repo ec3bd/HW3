@@ -24,7 +24,7 @@ def main():
                 Uprime[i][j] = reward((i,j)) + discount*bestValue
                 if abs(Uprime[i][j] - U[i][j]) > delta:
                     delta = abs(Uprime[i][j] - U[i][j])
-        endCondition = delta < .009 or iter == MAX_ITERS
+        endCondition = delta < 0 or iter == MAX_ITERS
     print(numpy.asarray(Uprime))
     print(iter)
 

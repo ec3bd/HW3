@@ -7,6 +7,7 @@ MAX_ITERS = 50
 lightWind = False
 strongWind = True
 
+
 def main():
     Uprime = [[0 for x in range(7)] for y in range(7)]
     discount = 1
@@ -40,9 +41,18 @@ def main():
     numpy.set_printoptions(linewidth=90)
     print(numpy.asarray(Uprime))
     print(iter)
-    print(optimalPolicy((3,0), U, iter))
+    policy1 = optimalPolicy((3,0), U)
+    policy2 = optimalPolicy((3,0), U, True)
+    print(policy1)
+    if len(policy1) == len(policy2):
+        nonequal = False
+        for i in range(0,len(policy1)):
+            if policy1[i] != policy2[i]:
+                nonequal = True
+        if nonequal:
+            print(policy2)
 
-def optimalPolicy(startpoint, U, optimal_iters = MAX_ITERS):
+def optimalPolicy(startpoint, U, alternatePath=False):
     i = startpoint[0]
     j = startpoint[1]
     path = []
@@ -62,9 +72,14 @@ def optimalPolicy(startpoint, U, optimal_iters = MAX_ITERS):
         for l in range(-1+wind,2+wind):
             for k in range(-1,2):
                 if i+l < 7 and i+l >=0 and j+k < 7 and j+k >=0:
-                    if U[i+l][j+k] > bestValue:
-                        bestValue = U[i+l][j+k]
-                        bestMove = (l,k)
+                    if not alternatePath:
+                        if U[i+l][j+k] > bestValue:
+                            bestValue = U[i+l][j+k]
+                            bestMove = (l,k)
+                    else:
+                        if U[i+l][j+k] >= bestValue:
+                            bestValue = U[i+l][j+k]
+                            bestMove = (l,k)
         i = i + bestMove[0]
         j = j + bestMove[1]
         if bestMove == (0,0):

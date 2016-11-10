@@ -33,14 +33,27 @@ def main():
                             if U[i+l][j+k] > bestValue:
                                 bestMove = (l,k)
                                 bestValue = U[i+l][j+k]
+                        else:
+                            ind1 = i+l
+                            ind2 = j+k
+                            if i+l >= 7:
+                                ind1 = 6
+                            if i+l < 0:
+                                ind1 = 0
+                            if j+k >= 7:
+                                ind2 = 6
+                            if j+k < 0:
+                                ind2 = 0
+                            if U[ind1][ind2] > bestValue:
+                                bestMove = (l,k)
+                                bestValue = U[ind1][ind2]
                 Uprime[i][j] = reward((i,j)) + discount*bestValue
                 if abs(Uprime[i][j] - U[i][j]) > delta:
                     delta = abs(Uprime[i][j] - U[i][j])
         endCondition = delta == 0 or iter == MAX_ITERS
 
-    numpy.set_printoptions(linewidth=90)
+    numpy.set_printoptions(linewidth=85)
     print(numpy.asarray(Uprime))
-    print(iter)
     policy1 = optimalPolicy((3,0), U)
     policy2 = optimalPolicy((3,0), U, True)
     print(policy1)
@@ -59,10 +72,12 @@ def optimalPolicy(startpoint, U, alternatePath=False):
     iter = 0
     while(True):
         iter+=1
+        lastState = (i,j)
         if iter == MAX_ITERS:
             break
         bestMove = (0,0)
         bestValue = U[i][j]
+        outofbound = False
         wind = 0
         if(j >= 3 and j<=5):
             if lightWind:
@@ -82,10 +97,14 @@ def optimalPolicy(startpoint, U, alternatePath=False):
                             bestMove = (l,k)
         i = i + bestMove[0]
         j = j + bestMove[1]
+        if outofbound:
+            i = ind1
+            j = ind2
         if bestMove == (0,0):
             break
         stringMove = ""
         printMove = (bestMove[0]-wind, bestMove[1])
+
         if printMove[0] == -1:
             stringMove = "N"
         elif printMove[0] == 0:
@@ -98,7 +117,7 @@ def optimalPolicy(startpoint, U, alternatePath=False):
             stringMove += ""
         elif printMove[1] == 1:
             stringMove += "E"
-        path.append(stringMove)
+        path.append(repr(lastState)+ " : "+repr(stringMove) + " -> ("+repr(i)+","+repr(j)+")")
 
     return path
 
